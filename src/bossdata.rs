@@ -71,6 +71,10 @@ pub enum BossId {
     Adina = 22006,
     Sabir = 21964,
     QadimThePeerless = 22000,
+    // Wing 8
+    Greer = 26725,
+    Decima = 26774,
+    Ura = 26712,
     // Raid "Events"
     Berg = 16088,
     Zane = 16137,
@@ -182,6 +186,9 @@ impl Display for BossId {
             BI::BrokenKing => "Broken King",
             BI::SoulEater => "Soul Eater",
             BI::EyeOfJudgement | BI::EyeOfFate => "Eyes",
+            BI::Greer => "Greer, the Blightbringer",
+            BI::Decima => "Decima, the Stormsinger",
+            BI::Ura => "Ura",
             // Fractals
             BI::Mama => "Mama",
             BI::Siax => "Siax",
