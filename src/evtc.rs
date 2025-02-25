@@ -199,21 +199,18 @@ pub fn read_encounter(rdr: &mut impl Read) -> io::Result<Encounter> {
 
     // Read agent count
     let agent_count = rdr.read_u32::<LittleEndian>()?;
-    println!("Agent Count: {agent_count}");
 
     // Read agent data
     let agents = read_agents(rdr, agent_count)?;
 
     // Read skill count
     let skill_count = rdr.read_u32::<LittleEndian>()?;
-    println!("Skill Count: {skill_count}");
 
     // Read skill data
     let skills = read_skills(rdr, skill_count)?;
 
     // Read combat log
     let combat_log = read_log(rdr)?;
-    println!("CbtEvt Count: {}", combat_log.len());
 
     // Find pov
     let pov = find_pov(combat_log.as_slice(), agents.as_slice());
