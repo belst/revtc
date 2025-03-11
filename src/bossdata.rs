@@ -74,6 +74,7 @@ pub enum BossId {
     // Wing 8
     Greer = 26725,
     Decima = 26774,
+    GodsquallDecima = 26867,
     Ura = 26712,
     // Raid "Events"
     Berg = 16088,
@@ -188,6 +189,7 @@ impl Display for BossId {
             BI::EyeOfJudgement | BI::EyeOfFate => "Eyes",
             BI::Greer => "Greer, the Blightbringer",
             BI::Decima => "Decima, the Stormsinger",
+            BI::GodsquallDecima => "Godsquall Decima",
             BI::Ura => "Ura",
             // Fractals
             BI::Mama => "Mama",

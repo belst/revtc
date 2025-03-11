@@ -75,10 +75,10 @@ pub struct Agent {
     pub subgroup: String,
 }
 
-impl TryFrom<EvtcAgent> for Agent {
+impl TryFrom<&EvtcAgent> for Agent {
     type Error = anyhow::Error;
 
-    fn try_from(raw: EvtcAgent) -> Result<Self, Self::Error> {
+    fn try_from(raw: &EvtcAgent) -> Result<Self, Self::Error> {
         if raw.is_elite != 0xFFFFFFFF {
             let mut it = raw.name.iter();
             let character_name: String =
@@ -112,10 +112,23 @@ fn read_agents(file: &mut impl Read, count: u32) -> io::Result<Vec<Agent>> {
         file.read_exact(agent_bytes)?;
 
         if agent.is_elite != 0xFFFFFFFF {
-            if let Ok(a) = agent.try_into() {
+            if let Ok(a) = (&agent).try_into() {
                 agents.push(a);
             }
         }
+    }
+    Ok(agents)
+}
+
+fn read_agents_raw(file: &mut impl Read, count: u32) -> io::Result<Vec<EvtcAgent>> {
+    let mut agents = Vec::new();
+    for _ in 0..count {
+        let mut agent: EvtcAgent = unsafe { mem::zeroed() };
+        let agent_bytes: &mut [u8; mem::size_of::<EvtcAgent>()] =
+            unsafe { mem::transmute(&mut agent) };
+        file.read_exact(agent_bytes)?;
+
+        agents.push(agent);
     }
     Ok(agents)
 }
@@ -170,6 +183,13 @@ pub struct Encounter {
     pub combat_log: Vec<CbtEvent>,
     pub pov: Option<Agent>,
 }
+pub struct RawEncounter {
+    pub header: Header,
+    pub agents: Vec<EvtcAgent>,
+    pub skills: Vec<EvtcSkill>,
+    pub combat_log: Vec<CbtEvent>,
+    pub pov: Option<Agent>,
+}
 
 impl Encounter {
     /// Deletes all cbtlog and skills
@@ -192,7 +212,19 @@ impl std::fmt::Debug for Encounter {
         )
     }
 }
-
+impl std::fmt::Debug for RawEncounter {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Encounter {{ header: {:?}, agents: {:?}, skills: Vec({}), combat_log: Vec({}), pov: {:?} }}",
+            self.header,
+            self.agents,
+            self.skills.len(),
+            self.combat_log.len(),
+            self.pov
+        )
+    }
+}
 pub fn read_encounter(rdr: &mut impl Read) -> io::Result<Encounter> {
     // Read header
     let header = read_header(rdr)?;
@@ -218,6 +250,45 @@ pub fn read_encounter(rdr: &mut impl Read) -> io::Result<Encounter> {
     Ok(Encounter {
         header,
         agents,
+        skills,
+        combat_log,
+        pov,
+    })
+}
+
+pub fn read_encounter_raw(rdr: &mut impl Read) -> io::Result<RawEncounter> {
+    // Read header
+    let header = read_header(rdr)?;
+
+    // Read agent count
+    let agent_count = rdr.read_u32::<LittleEndian>()?;
+
+    // Read agent data
+    let agents_raw = read_agents_raw(rdr, agent_count)?;
+    let agents = agents_raw
+        .iter()
+        .filter_map(|a| {
+            (a.is_elite != 0xFFFFFFFF)
+                .then(|| a.try_into().ok())
+                .flatten()
+        })
+        .collect::<Vec<Agent>>();
+
+    // Read skill count
+    let skill_count = rdr.read_u32::<LittleEndian>()?;
+
+    // Read skill data
+    let skills = read_skills(rdr, skill_count)?;
+
+    // Read combat log
+    let combat_log = read_log(rdr)?;
+
+    // Find pov
+    let pov = find_pov(combat_log.as_slice(), agents.as_slice());
+
+    Ok(RawEncounter {
+        header,
+        agents: agents_raw,
         skills,
         combat_log,
         pov,
