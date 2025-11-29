@@ -105,6 +105,8 @@ pub enum BossId {
     CerusLonelyTower = 26257,
     DeimosLonelyTower = 26226,
     EparchLonelyTower = 26231,
+    // Kinfall
+    WhisperingShadowKinfall = 27010,
     // IBS Strikes
     Icebrood = 22154,
     TheVoice = 22343,
@@ -202,6 +204,7 @@ impl Display for BossId {
             BI::Kanaxai => "Kanaxai",
             BI::CerusLonelyTower | BI::DeimosLonelyTower => "Cerus and Deimos",
             BI::EparchLonelyTower => "Eparch",
+            BI::WhisperingShadowKinfall => "Whispering Shadow",
             // Strikes IBS
             BI::Icebrood => "Icebrood",
             BI::TheVoice | BI::TheClaw => "Voice and Claw",
@@ -326,6 +329,17 @@ pub enum EliteSpec {
     Vindicator = 69,
     Mechanist = 70,
 
+    // Visions of Eternity elites:
+    Troubadour = 73,
+    Paragon = 74,
+    Amalgam = 75,
+    Ritualist = 76,
+    Antiquary = 77,
+    Galeshot = 78,
+    Conduit = 79,
+    Evoker = 80,
+    Luminary = 81,
+
     // Misc
     Unknown = 0,
 }
@@ -360,6 +374,15 @@ impl Display for EliteSpec {
             EliteSpec::Virtuoso => "Virtuoso",
             EliteSpec::Harbinger => "Harbinger",
             EliteSpec::Vindicator => "Vindicator",
+            EliteSpec::Troubadour => "Troubadour",
+            EliteSpec::Paragon => "Paragon",
+            EliteSpec::Amalgam => "Amalgam",
+            EliteSpec::Ritualist => "Ritualist",
+            EliteSpec::Antiquary => "Antiquary",
+            EliteSpec::Galeshot => "Galeshot",
+            EliteSpec::Conduit => "Conduit",
+            EliteSpec::Evoker => "Evoker",
+            EliteSpec::Luminary => "Luminary",
             EliteSpec::Unknown => "Unknown",
         };
         write!(f, "{}", name)
@@ -374,16 +397,16 @@ impl EliteSpec {
     pub fn profession(self) -> Profession {
         use EliteSpec::*;
         match self {
-            Dragonhunter | Firebrand | Willbender => Profession::Guardian,
-            Berserker | Spellbreaker | Bladesworn => Profession::Warrior,
-            Scrapper | Holosmith | Mechanist => Profession::Engineer,
-            Druid | Soulbeast | Untamed => Profession::Ranger,
-            Daredevil | Deadeye | Specter => Profession::Thief,
-            Tempest | Weaver | Catalyst => Profession::Elementalist,
-            Chronomancer | Mirage | Virtuoso => Profession::Mesmer,
-            Reaper | Scourge | Harbinger => Profession::Necromancer,
-            Herald | Renegade | Vindicator => Profession::Revenant,
-            _ => Profession::Unknown,
+            Dragonhunter | Firebrand | Willbender | Luminary => Profession::Guardian,
+            Berserker | Spellbreaker | Bladesworn | Paragon => Profession::Warrior,
+            Scrapper | Holosmith | Mechanist | Amalgam => Profession::Engineer,
+            Druid | Soulbeast | Untamed | Galeshot => Profession::Ranger,
+            Daredevil | Deadeye | Specter | Antiquary => Profession::Thief,
+            Tempest | Weaver | Catalyst | Evoker => Profession::Elementalist,
+            Chronomancer | Mirage | Virtuoso | Troubadour => Profession::Mesmer,
+            Reaper | Scourge | Harbinger | Ritualist => Profession::Necromancer,
+            Herald | Renegade | Vindicator | Conduit => Profession::Revenant,
+            Unknown => Profession::Unknown,
         }
     }
 
