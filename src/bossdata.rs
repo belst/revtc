@@ -136,6 +136,8 @@ pub enum BossId {
     PrototypeIndigoCm = 25423,
     // VoE Strikes
     KelaSeneschalOfWaves = 27124,
+    Vloxx = 28106,
+
     // Holiday Missions
     Freezie = 21333,
     // Soto Strikes
@@ -227,6 +229,7 @@ impl Display for BossId {
             | BI::PrototypeIndigoCm => "Old Lion's Court",
             // VoE Strikes
             BI::KelaSeneschalOfWaves => "Kela, Seneschal of Waves",
+            BI::Vloxx => "Vloxx",
             // Strikes soto
             BI::Dagda => "Dagda",
             BI::Cerus => "Cerus",
